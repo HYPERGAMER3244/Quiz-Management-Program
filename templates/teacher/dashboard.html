@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { padding: 20px; background: #f0f2f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logout { text-align: right; }
+        .actions { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+        .action-btn { padding: 12px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; }
+        .action-btn.add { background: #2ecc71; }
+        .action-btn.reports { background: #9b59b6; }
+        .action-btn.users { background: #e67e22; }
+        .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .quiz-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: relative; }
+        .quiz-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn { padding: 8px 15px; border-radius: 5px; text-decoration: none; }
+        .btn.edit { background: #3498db; color: white; }
+        .btn.delete { background: #e74c3c; color: white; }
+        .flash-messages { margin-bottom: 20px; }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .flash.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .flash.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Teacher Dashboard</h1>
+            <div class="logout">
+                Welcome, {{ session.username }}! <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+        
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <div class="actions">
+            <a href="{{ url_for('add_quiz') }}" class="action-btn add">Add New Quiz</a>
+            <a href="{{ url_for('view_reports') }}" class="action-btn reports">View Reports</a>
+            <a href="{{ url_for('manage_users') }}" class="action-btn users">Manage Users</a>
+        </div>
+        
+        <h2>Manage Quizzes</h2>
+        <div class="quiz-grid">
+            {% for quiz_id, quiz in quizzes.items() %}
+            <div class="quiz-card">
+                <h3>{{ quiz.title }}</h3>
+                <p>{{ quiz.description }}</p>
+                <p><strong>Questions:</strong> {{ quiz.questions|length }}</p>
+                <div class="quiz-actions">
+                    <a href="{{ url_for('edit_quiz', quiz_id=quiz_id) }}" class="btn edit">Edit</a>
+                    <a href="{{ url_for('delete_quiz', quiz_id=quiz_id) }}" class="btn delete" onclick="return confirm('Are you sure you want to delete this quiz?')">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

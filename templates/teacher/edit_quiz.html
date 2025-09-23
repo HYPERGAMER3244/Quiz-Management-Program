@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { padding: 20px; background: #f0f2f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { padding: 10px 20px; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn.save { background: #3498db; }
+        .btn.add { background: #2ecc71; }
+        .btn.delete { background: #e74c3c; }
+        .btn.back { background: #95a5a6; margin-left: 10px; }
+        .question-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+        .actions { display: flex; gap: 10px; margin-top: 20px; }
+        .error { color: red; margin-bottom: 15px; }
+        .success { color: green; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Quiz: {{ quiz.title }}</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <input type="hidden" name="update_quiz" value="1">
+            
+            <div class="form-group">
+                <label for="title">Quiz Title:</label>
+                <input type="text" id="title" name="title" value="{{ quiz.title }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="3" required>{{ quiz.description }}</textarea>
+            </div>
+            
+            <button type="submit" class="btn save">Save Changes</button>
+        </form>
+        
+        <h2>Questions</h2>
+        
+        {% for question in quiz.questions %}
+        <div class="question-item">
+            <h3>Question {{ loop.index }}: {{ question.question }}</h3>
+            <ul>
+                {% for option in question.options %}
+                <li>{{ option }} {% if option == question.correct %}(Correct){% endif %}</li>
+                {% endfor %}
+            </ul>
+            
+            <form method="POST">
+                <input type="hidden" name="delete_question" value="1">
+                <input type="hidden" name="question_index" value="{{ loop.index0 }}">
+                <button type="submit" class="btn delete">Delete Question</button>
+            </form>
+        </div>
+        {% endfor %}
+        
+        <h2>Add New Question</h2>
+        <form method="POST">
+            <input type="hidden" name="add_question" value="1">
+            
+            <div class="form-group">
+                <label for="new_question">Question:</label>
+                <input type="text" id="new_question" name="question" required>
+            </div>
+            
+            {% for i in range(1,5) %}
+            <div class="form-group">
+                <label for="option{{ i }}">Option {{ i }}:</label>
+                <input type="text" id="option{{ i }}" name="option{{ i }}" required>
+            </div>
+            {% endfor %}
+            
+            <div class="form-group">
+                <label for="correct_option">Correct Option:</label>
+                <select id="correct_option" name="correct_option" required>
+                    <option value="">Select correct option</option>
+                    <option value="option1">Option 1</option>
+                    <option value="option2">Option 2</option>
+                    <option value="option3">Option 3</option>
+                    <option value="option4">Option 4</option>
+                </select>
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="btn add">Add Question</button>
+                <a href="{{ url_for('teacher_dashboard') }}" class="btn back">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Report - {{ username }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { padding: 20px; background: #f0f2f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .chart-container { text-align: center; margin-bottom: 30px; }
+        .chart-container img { max-width: 100%; height: auto; }
+        .quiz-attempts { margin-top: 30px; }
+        .attempt { border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+        .attempt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .question-results { margin-top: 15px; }
+        .question-result { margin-bottom: 10px; padding: 10px; border-radius: 5px; }
+        .correct { background-color: #e8f5e9; border-left: 4px solid #4CAF50; }
+        .incorrect { background-color: #ffebee; border-left: 4px solid #F44336; }
+        .btn { padding: 10px 20px; background: #95a5a6; color: white; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Student Report: {{ username }}</h1>
+            <a href="{{ url_for('view_reports') }}" class="btn">Back to Reports</a>
+        </div>
+        
+        {% if chart_data %}
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ chart_data }}" alt="Performance Chart">
+        </div>
+        {% else %}
+        <p>No data available for performance chart.</p>
+        {% endif %}
+        
+        <div class="overall-stats">
+            <h2>Overall Performance</h2>
+            <p><strong>Total Questions Attempted:</strong> {{ student_data.total_questions }}</p>
+            <p><strong>Total Correct Answers:</strong> {{ student_data.total_score }}</p>
+            <p><strong>Overall Percentage:</strong> 
+                {% if student_data.total_questions > 0 %}
+                {{ ((student_data.total_score / student_data.total_questions) * 100)|round(1) }}%
+                {% else %}
+                N/A
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="quiz-attempts">
+            <h2>Quiz Attempts</h2>
+            {% for quiz_id, attempts in student_data.quiz_attempts.items() %}
+            <h3>{{ quiz_id|title }} Quiz</h3>
+            {% for attempt in attempts %}
+            <div class="attempt">
+                <div class="attempt-header">
+                    <strong>Score: {{ attempt.score }}/{{ attempt.total }}</strong>
+                    <span>Date: {{ attempt.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <p>Percentage: {{ ((attempt.score / attempt.total) * 100)|round(1) }}%</p>
+                
+                <div class="question-results">
+                    <h4>Question Details:</h4>
+                    {% for result in attempt.detailed_results %}
+                    <div class="question-result {% if result.is_correct %}correct{% else %}incorrect{% endif %}">
+                        <p><strong>Question:</strong> {{ result.question }}</p>
+                        <p><strong>Your Answer:</strong> {{ result.user_answer }}</p>
+                        <p><strong>Correct Answer:</strong> {{ result.correct_answer }}</p>
+                        <p><strong>Status:</strong> {% if result.is_correct %}Correct{% else %}Incorrect{% endif %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
