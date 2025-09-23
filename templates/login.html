@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; }
+        .login-container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
+        .input-group { margin-bottom: 25px; }
+        input { width: 100%; padding: 12px 20px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 2px rgba(52,152,219,0.2); }
+        button { width: 100%; padding: 12px 20px; border: none; border-radius: 5px; background: #3498db; color: white; font-size: 16px; cursor: pointer; }
+        .error { color: red; text-align: center; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                    <div class="error">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Username" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+</body>
+</html>

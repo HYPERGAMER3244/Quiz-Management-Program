@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ quiz.title }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { padding: 20px; background: #f0f2f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .question-box { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+        .question-text { font-weight: bold; margin-bottom: 20px; font-size: 18px; color: #2c3e50; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .option-label { display: flex; align-items: center; padding: 15px; background: white; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .option-label:hover { border-color: #3498db; background: #f0f8ff; }
+        .option-label input { margin-right: 12px; transform: scale(1.2); }
+        .submit-btn { display: block; width: 200px; margin: 30px auto 0; padding: 15px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .submit-btn:hover { background: #27ae60; }
+        .navigation { text-align: center; margin-top: 20px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #95a5a6; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ quiz.title }}</h1>
+            <p>{{ quiz.description }}</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('submit_quiz', quiz_id=quiz_id) }}">
+            {% for question in quiz.questions %}
+            <div class="question-box">
+                <div class="question-text">Question {{ loop.index }}: {{ question.question }}</div>
+                
+                <div class="options-grid">
+                    <!-- Option 1 -->
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ loop.index0 }}" value="{{ question.options[0] }}" required>
+                        {{ question.options[0] }}
+                    </label>
+                    
+                    <!-- Option 2 -->
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ loop.index0 }}" value="{{ question.options[1] }}" required>
+                        {{ question.options[1] }}
+                    </label>
+                    
+                    <!-- Option 3 -->
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ loop.index0 }}" value="{{ question.options[2] }}" required>
+                        {{ question.options[2] }}
+                    </label>
+                    
+                    <!-- Option 4 -->
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ loop.index0 }}" value="{{ question.options[3] }}" required>
+                        {{ question.options[3] }}
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-btn">Submit Quiz</button>
+        </form>
+
+        <div class="navigation">
+            <a href="{{ url_for('lobby') }}" class="back-btn">Back to Lobby</a>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to enhance user experience
+        document.addEventListener('DOMContentLoaded', function() {
+            const optionLabels = document.querySelectorAll('.option-label');
+            
+            optionLabels.forEach(label => {
+                label.addEventListener('click', function(e) {
+                    // If clicking on the label (not the radio button), check the radio
+                    if (e.target !== this.querySelector('input[type="radio"]')) {
+                        const radio = this.querySelector('input[type="radio"]');
+                        radio.checked = true;
+                        
+                        // Remove highlight from all options in this question
+                        const questionBox = this.closest('.question-box');
+                        questionBox.querySelectorAll('.option-label').forEach(opt => {
+                            opt.style.borderColor = '#ddd';
+                            opt.style.background = 'white';
+                        });
+                        
+                        // Highlight selected option
+                        this.style.borderColor = '#3498db';
+                        this.style.background = '#e8f4fc';
+                    }
+                });
+            });
+            
+            // Highlight initially selected options (if any)
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                radio.closest('.option-label').style.borderColor = '#3498db';
+                radio.closest('.option-label').style.background = '#e8f4fc';
+            });
+        });
+    </script>
+</body>
+</html>

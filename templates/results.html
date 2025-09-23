@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Results - {{ quiz_title }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { padding: 20px; background: #f0f2f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .score { font-size: 24px; color: #2c3e50; margin-bottom: 20px; }
+        .result-item { margin-bottom: 25px; padding: 20px; border-radius: 8px; border-left: 4px solid; }
+        .correct { background: #e8f5e8; border-color: #2ecc71; }
+        .incorrect { background: #fde8e8; border-color: #e74c3c; }
+        .question { font-weight: bold; margin-bottom: 10px; color: #2c3e50; }
+        .answer { margin: 5px 0; }
+        .btn { display: inline-block; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+        .btn:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ quiz_title }} - Results</h1>
+            <div class="score">
+                Your Score: <strong>{{ score }}/{{ total }}</strong> 
+                ({{ ((score/total)*100)|round(1) }}%)
+            </div>
+        </div>
+
+        {% for result in results %}
+        <div class="result-item {% if result.is_correct %}correct{% else %}incorrect{% endif %}">
+            <div class="question">Question {{ loop.index }}: {{ result.question }}</div>
+            <div class="answer"><strong>Your Answer:</strong> {{ result.user_answer if result.user_answer else "Not answered" }}</div>
+            <div class="answer"><strong>Correct Answer:</strong> {{ result.correct_answer }}</div>
+            <div class="answer"><strong>Status:</strong> 
+                <span style="color: {% if result.is_correct %}#2ecc71{% else %}#e74c3c{% endif %};">
+                    {{ "Correct" if result.is_correct else "Incorrect" }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('lobby') }}" class="btn">Back to Lobby</a>
+            <a href="{{ url_for('logout') }}" class="btn" style="background: #95a5a6;">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
