@@ -20,7 +20,7 @@ def create_connection():
             host='localhost',
             database='quiz_app',
             user='root',
-            password='qqcc@$qqcc'
+            password='your-password'
         )
         return connection
     except Error as e:
@@ -804,3 +804,4 @@ def delete_user_route(username):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
