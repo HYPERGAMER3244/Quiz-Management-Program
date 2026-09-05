@@ -4,7 +4,7 @@ import os
 import mysql.connector
 from mysql.connector import Error
 import matplotlib
-matplotlib.use('Agg')  # Use non-interactive backend
+matplotlib.use('Agg')   
 import matplotlib.pyplot as plt
 import io
 import base64
