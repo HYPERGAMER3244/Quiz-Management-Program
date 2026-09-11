@@ -802,6 +802,7 @@ def delete_user_route(username):
     
     return redirect(url_for('manage_users'))
 
+# used to run the program finnaly nad here debug mode is turned on or off
 if __name__ == '__main__':
     app.run(debug=True)
 
